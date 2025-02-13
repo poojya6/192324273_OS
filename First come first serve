@@ -1,0 +1,47 @@
+#include<stdio.h>
+struct Process{
+	int pid;
+	int burstTime;
+	int waitingTime;
+	int turnaroundTime;
+};
+void calculateWaitingtime(struct Process processes[],int n)
+{
+	processes[0].waitingTime=0;
+	for(int i=1;i<n;i++)
+	{
+		processes[i].waitingTime=processes[i-1].waitingTime+processes[i-1].burstTime;
+	}
+}
+void calculateturnaroundTime(struct Process processes[],int n)
+{
+	for(int i=0;i<n;i++)
+	{
+		processes[i].turnaroundTime=processes[i].burstTime+processes[i].waitingTime;
+	}
+}
+void printprocess(struct Process processes[],int n )
+{
+	printf("PID\t\tBURST_TIME\tWAITING_TIME\tTURNAROUNDTIME\n");
+	for(int i=0;i<n;i++)
+	{
+		printf("%d\t\t%d\t\t%d\t\t%d\n",processes[i].pid,processes[i].burstTime,processes[i].waitingTime,processes[i].turnaroundTime);
+	}
+}
+int main()
+{
+	printf("enter the number of processes required:\n");
+	int n;
+	scanf("%d",&n);
+	struct Process processes[n];
+	for(int i=0;i<n;i++)
+	{
+		printf("enter the burst time for process %d",i);
+		processes[i].pid=i;
+		scanf("%d",&processes[i].burstTime);
+	}
+	calculateWaitingtime(processes,n);
+	calculateturnaroundTime(processes,n);
+	printprocess(processes,n);
+	return 0;
+}
