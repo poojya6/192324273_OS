@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void scanDiskScheduling(int requests[], int n, int head, int direction, int diskSize) {
+    int totalSeekTime = 0;
+    int seekSequence[n + 2]; // To store the seek sequence
+    int index = 0;
+    
+    // Sort the requests array
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (requests[j] > requests[j + 1]) {
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    // Finding the position of the initial head in the sorted request array
+    int pos = 0;
+    while (pos < n && requests[pos] < head) {
+        pos++;
+    }
+
+    // Moving in the given direction (0 = Left, 1 = Right)
+    if (direction == 1) { // Moving towards larger values
+        for (int i = pos; i < n; i++) {
+            seekSequence[index++] = requests[i];
+            totalSeekTime += abs(head - requests[i]);
+            head = requests[i];
+        }
+        // Move to the disk end
+        if (head != diskSize - 1) {
+            seekSequence[index++] = diskSize - 1;
+            totalSeekTime += abs(head - (diskSize - 1));
+            head = diskSize - 1;
+        }
+        // Move back towards smaller values
+        for (int i = pos - 1; i >= 0; i--) {
+            seekSequence[index++] = requests[i];
+            totalSeekTime += abs(head - requests[i]);
+            head = requests[i];
+        }
+    } else { // Moving towards smaller values
+        for (int i = pos - 1; i >= 0; i--) {
+            seekSequence[index++] = requests[i];
+            totalSeekTime += abs(head - requests[i]);
+            head = requests[i];
+        }
+        // Move to the disk start
+        if (head != 0) {
+            seekSequence[index++] = 0;
+            totalSeekTime += abs(head - 0);
+            head = 0;
+        }
+        // Move back towards larger values
+        for (int i = pos; i < n; i++) {
+            seekSequence[index++] = requests[i];
+            totalSeekTime += abs(head - requests[i]);
+            head = requests[i];
+        }
+    }
+
+    // Display seek sequence and results
+    printf("\nSeek Sequence: ");
+    for (int i = 0; i < index; i++) {
+        printf("%d ", seekSequence[i]);
+        if (i != index - 1) {
+            printf("-> ");
+        }
+    }
+    
+    printf("\nTotal Seek Time: %d\n", totalSeekTime);
+    printf("Average Seek Time: %.2f\n", (float)totalSeekTime / n);
+}
+
+int main() {
+    int n, head, direction, diskSize;
+
+    // User input for disk size
+    printf("Enter the total disk size: ");
+    scanf("%d", &diskSize);
+
+    // User input for number of disk requests
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+    int requests[n];
+
+    // Input disk request sequence
+    printf("Enter the disk request sequence: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Input initial head position
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    // Input direction (1 for right/up, 0 for left/down)
+    printf("Enter the direction (1 for right, 0 for left): ");
+    scanf("%d", &direction);
+
+    // Perform SCAN disk scheduling
+    printf("\nSCAN Disk Scheduling Algorithm:\n");
+    scanDiskScheduling(requests, n, head, direction, diskSize);
+
+    return 0;
+}
