@@ -1,0 +1,159 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#define MAX_FILES 10
+
+// Structure to store file information
+
+typedef struct {
+
+int start_block;
+
+int length;
+
+} File;
+
+int main() {
+
+int disk_size, block_size, num_blocks;
+
+int num_files = 0;
+
+File files[MAX_FILES];
+
+int *disk; // Array to represent disk blocks
+
+// Input: Disk size and block size
+
+printf("Enter total disk size (in KB): ");
+
+scanf("%d", &disk_size);
+
+printf("Enter block size (in KB): ");
+
+scanf("%d", &block_size);
+
+disk = (int *)calloc(num_blocks, sizeof(int)); // Initialize disk blocks (0 = free, 1 =
+
+occupied)
+
+printf("\nDisk has %d blocks.\n", num_blocks);
+
+// Menu for file allocation
+
+while (1) {
+
+int choice;
+
+printf("\n1. Allocate File\n2. View Disk Allocation\n3. Exit\nEnter your choice: ");
+
+scanf("%d", &choice);
+
+if (choice == 1) { // File Allocation
+
+if (num_files >= MAX_FILES) {
+
+printf("\nCannot allocate more files. Limit reached.\n");
+
+continue;
+
+}
+
+int start, length, found = 0;
+
+printf("\nEnter starting block and file length: ");
+
+scanf("%d %d", &start, &length);
+
+// Check if file fits in the disk
+
+if (start < 0 || start + length > num_blocks) {
+
+printf("\nError: File does not fit in disk.\n");
+
+continue;
+
+}
+
+// Check if blocks are free
+
+for (int i = start; i < start + length; i++) {
+
+if (disk[i] == 1) {
+
+found = 1;
+
+break;
+
+}
+
+}
+
+if (found) {
+
+printf("\nError: Blocks already occupied.\n");
+
+} else {
+
+// Allocate file
+
+for (int i = start; i < start + length; i++) {
+
+disk[i] = 1;
+
+}
+
+files[num_files].start_block = start;
+
+files[num_files].length = length;
+num_blocks = disk_size / block_size;
+printf("\nFile allocated successfully.\n");
+
+}
+
+}
+
+else if (choice == 2) { // View Disk Allocation
+
+printf("\nDisk Allocation:\n");
+
+for (int i = 0; i < num_blocks; i++) {
+
+printf("%d ", disk[i]);
+
+}
+
+printf("\n");
+
+printf("\nFile Table:\n");
+
+printf("File No. | Start Block | Length\n");
+
+for (int i = 0; i < num_files; i++) {
+
+printf("%d | %d | %d\n", i + 1, files[i].start_block, files[i].length);
+
+}
+
+}
+
+else if (choice == 3) { // Exit
+
+free(disk);
+
+printf("\nExiting program.\n");
+
+break;
+
+}
+
+else {
+
+printf("\nInvalid choice! Try again.\n");
+
+}
+
+}
+
+return 0;}
