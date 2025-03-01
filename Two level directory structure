@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_FILES 5
+#define MAX_USERS 3
+
+struct User {
+    char name[20];
+    char files[MAX_FILES][20];
+    int fileCount;
+} users[MAX_USERS];
+
+int userCount = 0;
+
+void createUser() {
+    if (userCount >= MAX_USERS) {
+        printf("User limit reached!\n");
+        return;
+    }
+    printf("Enter username: ");
+    scanf("%s", users[userCount].name);
+    users[userCount].fileCount = 0;
+    userCount++;
+    printf("User created successfully.\n");
+}
+
+void createFile(int u) {
+    if (users[u].fileCount >= MAX_FILES) {
+        printf("File limit reached!\n");
+        return;
+    }
+    printf("Enter file name: ");
+    scanf("%s", users[u].files[users[u].fileCount]);
+    users[u].fileCount++;
+    printf("File created successfully.\n");
+}
+
+void displayFiles(int u) {
+    printf("Files in %s's directory:\n", users[u].name);
+    for (int i = 0; i < users[u].fileCount; i++)
+        printf("%s\n", users[u].files[i]);
+}
+
+int main() {
+    int choice, userIndex;
+    
+    while (1) {
+        printf("\n1. Create User\n2. Select User\n3. Exit\nChoice: ");
+        scanf("%d", &choice);
+
+        if (choice == 1) createUser();
+        else if (choice == 2) {
+            printf("Enter user index (0-%d): ", userCount - 1);
+            scanf("%d", &userIndex);
+            if (userIndex >= userCount) {
+                printf("Invalid user!\n");
+                continue;
+            }
+            int opt = 0;
+            while (opt != 3) {
+                printf("\n1. Create File\n2. Display Files\n3. Logout\nChoice: ");
+                scanf("%d", &opt);
+                if (opt == 1) createFile(userIndex);
+                else if (opt == 2) displayFiles(userIndex);
+            }
+        } else break;
+    }
+    
+    return 0;
+}
