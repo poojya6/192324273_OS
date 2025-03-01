@@ -1,0 +1,119 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 10
+
+#define MAX_PAGES 50
+
+// Function to check if a page is already in frames
+
+int isPageInFrame(int frames[], int num_frames, int page) {
+
+for (int i = 0; i < num_frames; i++) {
+
+if (frames[i] == page) {
+
+return 1; // Page found
+
+}
+
+}
+
+return 0; // Page not found
+
+}
+
+// FIFO Page Replacement Algorithm
+
+void fifoPageReplacement(int pages[], int num_pages, int num_frames) {
+
+int frames[MAX_FRAMES]; // Frame buffer
+
+int page_faults = 0; // Count of page faults
+
+int index = 0; // Points to the frame to be replaced
+
+// Initialize frames with -1 (empty)
+
+for (int i = 0; i < num_frames; i++) {
+
+frames[i] = -1;
+
+}
+
+printf("\nPage Reference | Frames\n");
+printf("------------------------\n");
+
+// Process each page in the reference string
+
+for (int i = 0; i < num_pages; i++) {
+
+printf("%12d | ", pages[i]);
+
+// If the page is not already in frames
+
+if (!isPageInFrame(frames, num_frames, pages[i])) {
+
+frames[index] = pages[i]; // Replace the oldest page
+
+index = (index + 1) % num_frames; // Move FIFO index
+
+page_faults++; // Increase page fault count
+
+}
+
+// Print the current frame state
+
+for (int j = 0; j < num_frames; j++) {
+
+if (frames[j] != -1)
+
+printf("%d ", frames[j]);
+
+else
+
+printf("- ");
+
+}
+
+printf("\n");
+
+}
+
+printf("\nTotal Page Faults: %d\n", page_faults);
+
+}
+
+int main() {
+
+int num_pages, num_frames;
+
+int pages[MAX_PAGES];
+
+// Input: Number of pages
+
+printf("Enter number of pages: ");
+
+scanf("%d", &num_pages);
+
+// Input: Page reference string
+
+printf("Enter the page reference string: ");
+
+for (int i = 0; i < num_pages; i++) {
+
+scanf("%d", &pages[i]);
+
+}
+
+// Input: Number of frames
+
+printf("Enter number of frames: ");
+
+scanf("%d", &num_frames);
+
+// Run FIFO page replacement
+fifoPageReplacement(pages, num_pages, num_frames);
+
+return 0;
+
+}
